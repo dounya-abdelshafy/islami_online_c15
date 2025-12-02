@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:islami_app/ui/home/taps/hadith/hadith_tap.dart';
+import 'package:islami_app/ui/home/taps/hadith/hadeth_tap.dart';
 import 'package:islami_app/ui/home/taps/quran/quran_tap.dart';
 import 'package:islami_app/ui/home/taps/radio/radio_tap.dart';
 import 'package:islami_app/ui/home/taps/sebha/sebha_tap.dart';
 import 'package:islami_app/ui/home/taps/time/time_tap.dart';
-import 'package:islami_app/utils/app_assets.dart';
 import 'package:islami_app/utils/app_colors.dart';
+
+import '../../utils/app_assets.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = 'home_screen';
@@ -134,7 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SizedBox(height: 35),
                 Image.asset(AppAssets.logo),
-                Expanded(child: QuranTap()),
+                //todo: to loop in all indices in the list<Widget>
+                Expanded(child: taps[selectedIndex]),
               ],
             ),
           ),

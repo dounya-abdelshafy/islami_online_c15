@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:islami_app/ui/home/taps/quran/quran_resources.dart';
-import 'package:islami_app/utils/app_assets.dart';
 import 'package:islami_app/utils/app_styles.dart';
+
+import '../../../../utils/app_assets.dart';
 
 class SuraItem extends StatelessWidget {
   int index;

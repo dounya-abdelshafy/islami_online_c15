@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:islami_app/ui/home/taps/quran/most_recent_widget.dart';
 import 'package:islami_app/ui/home/taps/quran/quran_resources.dart';
-import 'package:islami_app/ui/home/taps/quran/sura_details.dart';
 import 'package:islami_app/ui/home/taps/quran/sura_item.dart';
 import 'package:islami_app/utils/app_styles.dart';
+import 'package:islami_app/utils/shared_pref.dart';
 
 import '../../../../utils/app_assets.dart';
 import '../../../../utils/app_colors.dart';
+import 'details/sura_details_screen2.dart';
 
 /*
 width = 430
 height = 932
  */
 
-class QuranTap extends StatelessWidget {
-  const QuranTap({super.key});
+class QuranTap extends StatefulWidget {
+  QuranTap({super.key});
+
+  @override
+  State<QuranTap> createState() => _QuranTapState();
+}
+
+class _QuranTapState extends State<QuranTap> {
+  List<int> filterList = List.generate(114, (index) => index);
+
+  // List<int> searchList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +36,7 @@ class QuranTap extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
+            style: AppStyles.bold16White,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -43,63 +55,14 @@ class QuranTap extends StatelessWidget {
               // hintStyle: Theme.of(context).textTheme.headlineLarge,
             ),
             cursorColor: AppColors.primaryColor,
+            onChanged: (newText) {
+              searchByNewText(newText);
+            },
           ),
 
           SizedBox(height: height * 0.02),
 
-          Text("Most Recently", style: AppStyles.bold16White),
-
-          SizedBox(height: height * 0.01),
-
-          SizedBox(
-            height: height * 0.17,
-            width: double.infinity,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: width * 0.03),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.primaryColor,
-                  ),
-                  child: Row(
-                    children: [
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // SizedBox(height: 10),
-                              Text(
-                                QuranResources.englishQuranList[index],
-                                style: AppStyles.bold24Black,
-                              ),
-                              Text(
-                                QuranResources.arabicQuranList[index],
-                                style: AppStyles.bold24Black,
-                              ),
-                              SizedBox(height: height * 0.02),
-                              Text(
-                                "${QuranResources.versesNumberList[index]} Verses",
-                                style: AppStyles.bold14Black,
-                              ),
-                            ],
-                          ),
-                          ImageIcon(AssetImage(AppAssets.suraImage), size: 130),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return SizedBox(width: width * 0.02);
-              },
-              itemCount: 114,
-            ),
-          ),
+          MostRecentWidget(),
 
           SizedBox(height: height * 0.01),
 
@@ -113,10 +76,15 @@ class QuranTap extends StatelessWidget {
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
+                    //todo: save last sura index in shared pref
+                    saveNewSuraList(filterList[index]);
                     //todo: navigate to Sura Details Screen
-                    SuraDetails();
+                    Navigator.of(context).pushNamed(
+                      SuraDetails2.routeName,
+                      arguments: filterList[index],
+                    );
                   },
-                  child: SuraItem(index: index),
+                  child: SuraItem(index: filterList[index]),
                 );
               },
               separatorBuilder: (context, index) {
@@ -124,14 +92,28 @@ class QuranTap extends StatelessWidget {
                   color: AppColors.whiteColor,
                   thickness: 2,
                   indent: width * 0.1,
-                  endIndent: width * 0.05,
+                  endIndent: width * 0.04,
                 );
               },
-              itemCount: 114,
+              itemCount: filterList.length,
             ),
           ),
         ],
       ),
     );
+  }
+
+  void searchByNewText(newText) {
+    List<int> filterSearchList = [];
+    for (int i = 0; i < QuranResources.englishQuranList.length; i++) {
+      if (QuranResources.arabicQuranList[i].toLowerCase().contains(newText)) {
+        filterSearchList.add(i);
+      }
+      if (QuranResources.englishQuranList[i].toLowerCase().contains(newText)) {
+        filterSearchList.add(i);
+      }
+    }
+    filterList = filterSearchList;
+    setState(() {});
   }
 }
